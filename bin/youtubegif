@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# Youtube-gif
+# Creates a gif using youtube-dl and gifme then uploads to CloudApp.
+
+youtube_id=$1
+start_time=$2
+end_time=$3
+
+youtube-dl -o "/tmp/%(id)s" $youtube_id
+movieme /tmp/${youtube_id} $start_time $end_time

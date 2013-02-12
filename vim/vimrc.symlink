@@ -1,20 +1,24 @@
-call pathogen#runtime_append_all_bundles()
+execute pathogen#infect()
+call pathogen#helptags()
+
+colorscheme solarized
 
 filetype plugin indent on
 
-set nocompatible
+nnoremap <F5> :GundoToggle<CR>
+nnoremap <space><space> :NERDTreeToggle<CR>
+nnoremap <space>f :NERDTreeFind<CR>
+
+set background=dark
 set backspace=indent,eol,start
-set shiftwidth=2
-set tabstop=2
+set clipboard=unnamed
 set expandtab
-set ruler
 set list
 set listchars=tab:>.
+set nocompatible
+set ruler
+set shiftwidth=2
 set statusline=[%02n]\ %f\ %(\[%M%R%H]%)%=\ %4l,%02c%2V\ %P%*
-"set number
+set tabstop=2
 
 syntax enable
-set background=dark
-colorscheme solarized
-
-set clipboard=unnamed

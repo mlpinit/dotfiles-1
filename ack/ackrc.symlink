@@ -4,9 +4,6 @@
 # follow symlinks
 --follow
 
-# Set pager to $PAGER
---pager=$PAGER
-
 # Ignore directories
 --ignore-dir=.git
 --ignore-dir=node_modules

@@ -7,4 +7,8 @@ then
   alias l="gls -lAh --color"
   alias ll="gls -l --color"
   alias la='gls -A --color'
+  alias lt='gls -lArht --color'
 fi
+
+alias killjobs="jobs -p | sed -e 's/.*\([0-9]\{5\}\).*/\1/' | xargs kill"
+alias mou="open -a Mou"

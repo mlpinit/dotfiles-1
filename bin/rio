@@ -18,11 +18,7 @@ Rio: Load CSV from stdin into R as a data frame, execute given commands, and get
 usage: Rio OPTIONS
 
 OPTIONS:
-   -d      Delimiter
-   -e      Commands to execute
-   -h      Show this message
    -g      Import ggplot2
-   -n      CSV has no header
    -p      Import plyr
    -s      Import sqldf
    -v      Verbose
@@ -31,38 +27,27 @@ EOF
 }
 
 callR() {
-	Rscript --vanilla -e "df<-read.csv('${IN}',header=${HEADER},sep='${DELIMITER}',stringsAsFactors=F);${REQUIRES}${SCRIPT}last<-.Last.value;if(is.data.frame(last)){write.table(last,'${OUT}',sep=',',quote=F,row.names=F,col.names=${HEADER});}else if(exists('is.ggplot')&&is.ggplot(last)){ggsave('${OUT}',last,dpi=72);}else{sink('${OUT}');print(last);}"
+  Rscript --vanilla -e "df<-read.csv('${IN}',header=${HEADER},sep='${DELIMITER}',stringsAsFactors=F);${REQUIRES}${SCRIPT};last<-.Last.value;if(is.data.frame(last)){write.table(last,'${OUT_PNG}',sep=',',quote=F,row.names=F,col.names=${HEADER});}else if(exists('is.ggplot')&&is.ggplot(last)){ggsave(filename='${OUT_PNG}',last,dpi=72);}else{sink('${OUT_PNG}');print(last);}"
 }
 
-SCRIPT=
+SCRIPT="${!#}"
 REQUIRES=
-DELIMITER=","
-HEADER="T"
+DELIMITER="\\\\t"
+HEADER="F"
 VERBOSE=false
-IN=$(mktemp)
-OUT=$(mktemp).png
-while getopts "d:hgnpsve:" OPTION
+IN=$(mktemp /tmp/temp.XXXX)
+OUT=$(mktemp /tmp/temp.XXXX)
+OUT_PNG="${OUT}.png"
+touch $OUT_PNG
+while getopts "gpsv:" OPTION
 do
 	case $OPTION in
-		d)
-			DELIMITER=$OPTARG
-			;;
-		e)
-			SCRIPT=$OPTARG
-			if ! echo $SCRIPT | grep -qe "; *$"
-			then
-				SCRIPT="${SCRIPT};"
-			fi
-			;;
 		h)
 			usage
 			exit 1
 			;;
 		g)
 			REQUIRES="${REQUIRES}require(ggplot2);g<-ggplot(df);"
-			;;
-		n)
-			HEADER="F"
 			;;
 		p)
 			REQUIRES="${REQUIRES}require(plyr);"
@@ -80,6 +65,7 @@ do
 	esac
 done
 
+
 cat /dev/stdin > $IN
 if $VERBOSE
 then
@@ -87,6 +73,6 @@ then
 else
 	callR >/dev/null 2>&1
 fi
-cat $OUT
-rm $IN $OUT
+cat $OUT_PNG
+rm $IN $OUT $OUT_PNG
 rm -f Rplots.pdf
